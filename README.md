@@ -12,7 +12,7 @@ Website: [Docu-Swift](https://docu-swift.onrender.com/)
 ## Features
 
 - **File Upload**: Users can upload DOCX files for conversion.
-- **DOCX to PDF Conversion**: The application utilizes `node-qpdf2` for converting DOCX files into PDFs.
+- **DOCX to PDF Conversion**: The application utilizes headless LibreOffice for converting DOCX files into PDFs to ensure proper formatting.
 - **Password Encryption**: Optional password protection for PDFs if the user provides a password.
 - **Modern UI**: Built with React and styled using Tailwind CSS.
 - **Backend API**: Developed with Express.js, handling file uploads and conversion logic.
@@ -26,19 +26,19 @@ Website: [Docu-Swift](https://docu-swift.onrender.com/)
 
 ```
 backend
-|  node_modules
-|  src
-|  |  config
-|  |  |  multerConfig.js   # Config for file uploads using Multer
-|  |  |  rateLimiters.js   # Rate limiter configurations
-|  |  handlers
-|  |  |  errorHandlers.js # Global error handlers
-|  |  routes
-|  |  |  conversion.js   # Routes for file conversion
-|  |  utils
-|  |  |  cleanup.js      # Utility for cleaning up temporary files
-|  |  app.js              # Main server entry point
-|  uploads
+|  node_modules
+|  src
+|  |  config
+|  |  |  multerConfig.js   # Config for file uploads using Multer
+|  |  |  rateLimiters.js   # Rate limiter configurations
+|  |  handlers
+|  |  |  errorHandlers.js  # Global error handlers
+|  |  routes
+|  |  |  conversion.js     # Routes for file conversion
+|  |  utils
+|  |  |  cleanup.js        # Utility for cleaning up temporary files
+|  |  app.js               # Main server entry point
+|  uploads
 package.json
 package-lock.json
 ```
@@ -47,14 +47,14 @@ package-lock.json
 
 ```
 frontend
-|  node_modules
-|  public
-|  src
-|  |  components
-|  |  |  FileUpload.jsx  # Component for file upload UI
-|  |  App.js             # Main React component
-|  |  index.js          # React entry point
-|  |  index.css         # Styling with Tailwind CSS
+|  node_modules
+|  public
+|  src
+|  |  components
+|  |  |  FileUpload.jsx  # Component for file upload UI
+|  |  App.js             # Main React component
+|  |  index.js           # React entry point
+|  |  index.css          # Styling with Tailwind CSS
 .gitignore
 tailwind.config.js
 package.json
@@ -68,6 +68,7 @@ package-lock.json
 ### Prerequisites
 - [Node.js](https://nodejs.org/) (v16 or above)
 - [Docker](https://www.docker.com/)
+- [LibreOffice](https://www.libreoffice.org/) (headless mode for DOCX to PDF conversion)
 
 ### Clone the Repository
 ```bash
@@ -133,7 +134,8 @@ cd docu-swift
 
 ### Backend
 - **Express.js**: Handles API requests and business logic.
-- **node-qpdf2**: Used for DOCX to PDF conversion and encryption.
+- **LibreOffice**: Used for DOCX to PDF conversion to ensure formatting integrity.
+- **node-qpdf2**: Used for PDF encryption.
 - **Multer**: Middleware for file uploads.
 
 ### Deployment
