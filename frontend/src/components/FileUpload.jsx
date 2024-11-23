@@ -4,6 +4,7 @@ import { Upload, AlertCircle, FileText, Check, Loader, Download } from 'lucide-r
 
 const FileUpload = () => {
   const [file, setFile] = useState(null);
+  const [fileMetadata, setFileMetadata] = useState(null); // State to hold file metadata
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [dragActive, setDragActive] = useState(false);
@@ -21,7 +22,17 @@ const FileUpload = () => {
         setError('File size must be less than 5MB');
         return;
       }
+
+      // Extract metadata
+      const metadata = {
+        name: selectedFile.name,
+        size: (selectedFile.size / 1024).toFixed(2) + ' KB', // Convert to KB
+        type: selectedFile.type || 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        lastModified: new Date(selectedFile.lastModified).toLocaleString(),
+      };
+
       setFile(selectedFile);
+      setFileMetadata(metadata);
       setError(null);
       setDownloadUrl(null); // Reset download URL on new file selection
     }
@@ -136,36 +147,15 @@ const FileUpload = () => {
           </div>
         </div>
 
-        <div className="flex items-center space-x-4">
-          <label className="flex items-center space-x-2">
-            <div
-              onClick={() => setPasswordProtect(!passwordProtect)}
-              className={`w-10 h-6 flex items-center rounded-full p-1 cursor-pointer transition-colors duration-300 ${
-                passwordProtect ? 'bg-green-600' : 'bg-gray-300'
-              }`}
-            >
-              <div
-                className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${
-                  passwordProtect ? 'translate-x-4' : ''
-                }`}
-              ></div>
-            </div>
-            <span className="text-sm font-medium text-gray-700">Password Protect</span>
-          </label>
-        </div>
-
-        {passwordProtect && (
-          <div className="mt-4">
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-              Enter Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+        {fileMetadata && (
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mt-4">
+            <h4 className="text-lg font-semibold text-gray-700 mb-2">File Metadata</h4>
+            <ul className="text-sm text-gray-600 space-y-1">
+              <li><strong>Name:</strong> {fileMetadata.name}</li>
+              <li><strong>Size:</strong> {fileMetadata.size}</li>
+              <li><strong>Type:</strong> {fileMetadata.type}</li>
+              <li><strong>Last Modified:</strong> {fileMetadata.lastModified}</li>
+            </ul>
           </div>
         )}
 
