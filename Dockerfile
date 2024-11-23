@@ -1,6 +1,11 @@
 # Step 1: Build the React app
 FROM node:18 AS build
 
+# Install qpdf
+RUN apt-get update && apt-get install -y qpdf \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set working directory
 WORKDIR /usr/src/app
 
 # Copy only the frontend package.json and lock file to install dependencies
