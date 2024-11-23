@@ -21,8 +21,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(generalLimiter);
-app.use(conversionLimiter);
+// app.use(generalLimiter);
+// app.use(conversionLimiter);
 
 // Serve React frontend static files
 const frontendBuildPath = path.resolve(__dirname, '../public'); // Adjusted path to 'public'
