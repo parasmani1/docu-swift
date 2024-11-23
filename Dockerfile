@@ -1,11 +1,9 @@
 # Step 1: Build the React app
 FROM node:18 AS build
 
-# Install qpdf
+# Install qpdf (needed during the build process)
 RUN apt-get update && apt-get install -y qpdf \
     && rm -rf /var/lib/apt/lists/*
-
-RUN echo $PATH && which qpdf
 
 # Set working directory
 WORKDIR /usr/src/app
@@ -25,6 +23,10 @@ RUN npm run build
 
 # Step 2: Set up the backend and serve the React app
 FROM node:18
+
+# Install qpdf in the runtime container
+RUN apt-get update && apt-get install -y qpdf \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /usr/src/app
 

@@ -41,8 +41,6 @@ router.post('/convert', conversionLimiter, upload.single('file'), async (req, re
                 keyLength: 256,
                 restrictions: {
                     print: 'full',
-                    modify: 'none',
-                    extract: 'n'
                 }
             };
 
