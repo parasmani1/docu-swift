@@ -1,17 +1,15 @@
 import express from 'express';
 import fs from 'fs';
-import docxPdf from 'docx-pdf';
+import { exec } from 'child_process';
 import { encrypt } from 'node-qpdf2';
 import { promisify } from 'util';
 import { upload } from '../config/multerConfig.js';
 import { conversionLimiter } from '../config/rateLimiters.js';
 
 const router = express.Router();
-const docxPdfPromise = promisify(docxPdf);
 const unlinkAsync = promisify(fs.unlink);
 
 router.post('/convert', conversionLimiter, upload.single('file'), async (req, res) => {
-    
     try {
         const file = req.file;
         const password = req.body.password;
@@ -27,12 +25,25 @@ router.post('/convert', conversionLimiter, upload.single('file'), async (req, re
 
         const pdfPath = `${file.path}.pdf`;
         const protectedPdfPath = `${file.path}_protected.pdf`;
-        
-        // Convert DOCX to PDF
-        await docxPdfPromise(file.path, pdfPath);
+
+        // Convert DOCX to PDF using LibreOffice
+        await new Promise((resolve, reject) => {
+            exec(`libreoffice --headless --convert-to pdf ${file.path} --outdir ${file.destination}`, (error) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve();
+                }
+            });
+        });
+
+        // Ensure the PDF file exists after conversion
+        if (!fs.existsSync(pdfPath)) {
+            await unlinkAsync(file.path); // Cleanup uploaded DOCX
+            return res.status(500).json({ error: 'PDF conversion failed. Output file not found.' });
+        }
 
         if (password) {
-            
             // Encrypt the PDF
             const encryptOptions = {
                 input: pdfPath,
@@ -41,7 +52,7 @@ router.post('/convert', conversionLimiter, upload.single('file'), async (req, re
                 keyLength: 256,
                 restrictions: {
                     print: 'full',
-                }
+                },
             };
 
             await encrypt(encryptOptions);
@@ -55,6 +66,9 @@ router.post('/convert', conversionLimiter, upload.single('file'), async (req, re
                     console.error('Error sending protected file:', err);
                     return res.status(500).json({ error: 'Error sending file' });
                 }
+                // Cleanup
+                await unlinkAsync(protectedPdfPath);
+                await unlinkAsync(file.path);
             });
         } else {
             // If no password protection requested, send the unprotected PDF
@@ -63,13 +77,16 @@ router.post('/convert', conversionLimiter, upload.single('file'), async (req, re
                     console.error('Error sending unprotected file:', err);
                     return res.status(500).json({ error: 'Error sending file' });
                 }
+                // Cleanup
+                await unlinkAsync(pdfPath);
+                await unlinkAsync(file.path);
             });
         }
     } catch (error) {
         console.error('Conversion/encryption error:', error);
-        res.status(500).json({ 
+        res.status(500).json({
             error: 'Conversion or encryption failed',
-            details: error.message 
+            details: error.message,
         });
     }
 });
