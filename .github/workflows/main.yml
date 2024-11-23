@@ -10,11 +10,7 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
-
-    strategy: 
-      matrix:
-        node-version: [16.x]
-
+    
     steps:
       - name: Checkout 
         uses: actions/checkout@v4
