@@ -17,8 +17,8 @@ const FileUpload = () => {
         setError('Please select a valid DOCX file');
         return;
       }
-      if (selectedFile.size > 10 * 1024 * 1024) {
-        setError('File size must be less than 10MB');
+      if (selectedFile.size > 5 * 1024 * 1024) {
+        setError('File size must be less than 5MB');
         return;
       }
       setFile(selectedFile);
@@ -74,7 +74,9 @@ const FileUpload = () => {
         const reader = new FileReader();
         reader.onload = () => {
           const error = JSON.parse(reader.result);
-          setError(error.error || 'Conversion failed. Please try again.');
+          setError(
+            `${error.error || 'Conversion failed. Please try again.'} Note: As the app is deployed on a free server, converting large files may fail occasionally. Please retry.`
+          );
         };
         reader.readAsText(response.data);
         return;
@@ -83,7 +85,9 @@ const FileUpload = () => {
       const url = window.URL.createObjectURL(new Blob([response.data]));
       setDownloadUrl(url); // Store download URL
     } catch (err) {
-      setError('Conversion failed. Please try again.');
+      setError(
+        'Conversion failed. Please try again. Note: As the app is deployed on a free server, converting large files may fail occasionally. Please retry.'
+      );
     } finally {
       setLoading(false);
     }
@@ -127,7 +131,7 @@ const FileUpload = () => {
               {file ? file.name : 'Drop your DOCX file here, or click to select'}
             </p>
             <p className="mt-1 text-xs text-gray-500">
-              Max file size: 10MB
+              Max file size: 5MB
             </p>
           </div>
         </div>
