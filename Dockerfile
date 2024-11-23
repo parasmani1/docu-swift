@@ -5,6 +5,8 @@ FROM node:18 AS build
 RUN apt-get update && apt-get install -y qpdf \
     && rm -rf /var/lib/apt/lists/*
 
+RUN echo $PATH && which qpdf
+
 # Set working directory
 WORKDIR /usr/src/app
 
