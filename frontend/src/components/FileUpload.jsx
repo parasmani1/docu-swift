@@ -159,6 +159,37 @@ const FileUpload = () => {
           </div>
         )}
 
+<div className="flex items-center space-x-4">
+          <label className="flex items-center space-x-2">
+            <div
+              onClick={() => setPasswordProtect(!passwordProtect)}
+              className={`w-10 h-6 flex items-center rounded-full p-1 cursor-pointer transition-colors duration-300 ${
+                passwordProtect ? 'bg-green-600' : 'bg-gray-300'
+              }`}
+            >
+              <div
+                className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${
+                  passwordProtect ? 'translate-x-4' : ''
+                }`}
+              ></div>
+            </div>
+            <span className="text-sm font-medium text-gray-700">Password Protect</span>
+          </label>
+        </div>
+        {passwordProtect && (
+          <div className="mt-4">
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              Enter Password
+            </label>
+            <input
+              type="password"
+              id="password"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+        )}
         <button
           type="submit"
           disabled={loading || !file}
